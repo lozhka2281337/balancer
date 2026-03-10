@@ -21,14 +21,13 @@
 
 1) для всех машин вычисляем нагрузку (load_i) по формуле:
 
-load_i = max(
-    (used_memory)/total_memory,
-    (used_cpu)/total_cpu
-) 
-и сортируем в порядке возрастания
+    load_i = max(
+        (used_memory)/total_memory,
+        (used_cpu)/total_cpu) 
+    и сортируем в порядке возрастания
 
-mx - машина с max(loads)
-mn - машина с min(loads)
+    mx - машина с max(loads)
+    mn - машина с min(loads)
 
 * цикл (до тех пор как не найдется mn такая, что выбранный процесс с mx помещается на mn
 или не переберем все машины до mx):
