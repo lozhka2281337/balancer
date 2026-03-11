@@ -40,10 +40,10 @@ final class ProcessController extends AbstractController
             return response::errors($errors, 422);
 
         // ищем подходящую машину
-        $target_machine = $this->APF->SearchMachine($process);
-        if ($target_machine === null) 
+        $targetMachine = $this->APF->SearchMachine($process);
+        if ($targetMachine === null) 
             return response::error('не нашлось подходящей машины', 422);
-        $process->setMachine($target_machine);
+        $process->setMachine($targetMachine);
 
         // через репозиторий сохраняем в бд
         $process = $this->processRepository->store($process);

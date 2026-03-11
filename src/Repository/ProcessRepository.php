@@ -34,4 +34,9 @@ class ProcessRepository extends ServiceEntityRepository
     public function findMachineProcess(Machine $machine): array {
         return $this->findBy(['machine' => $machine]);
     }
+
+    public function moveProcess(Process $process, Machine $machine): void{
+        $process->setMachine($machine);
+        $this->store($process);
+    }
 }

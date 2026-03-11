@@ -20,17 +20,17 @@ class AddProcessFunctions {
         $cpu = $process->getCpu();
         $memory = $process->getMemory();
         
-        $machine_processes = $this->processRepository->findMachineProcess($machine); //$this->em->getRepository(Process::class)->findBy(['machine' => $machine]);
-        $used_memory = 0;
-        $used_cpu = 0;
+        $machineProcesses = $this->processRepository->findMachineProcess($machine); //$this->em->getRepository(Process::class)->findBy(['machine' => $machine]);
+        $usedMemory = 0;
+        $usedCpu = 0;
 
-        foreach ($machine_processes as $pr){
-            $used_cpu += $pr->getCpu();
-            $used_memory += $pr->getMemory();
+        foreach ($machineProcesses as $pr){
+            $usedCpu += $pr->getCpu();
+            $usedMemory += $pr->getMemory();
         }
 
-        if ($machine->getTotalCpu() - $used_cpu >= $cpu || 
-            $machine->getTotalMemory() - $used_memory >= $memory ){
+        if ($machine->getTotalCpu() - $usedCpu >= $cpu || 
+            $machine->getTotalMemory() - $usedMemory >= $memory ){
                 return true;
         }      
         
