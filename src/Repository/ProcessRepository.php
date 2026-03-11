@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Machine;
 use App\Entity\Process;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -23,5 +24,14 @@ class ProcessRepository extends ServiceEntityRepository
         $this->getEntityManager()->flush();
 
         return $process;
+    }
+
+    public function remove(Process $process): void {
+        $this->getEntityManager()->remove($process);
+        $this->getEntityManager()->flush();
+    }
+
+    public function findMachineProcess(Machine $machine): array {
+        return $this->findBy(['machine' => $machine]);
     }
 }

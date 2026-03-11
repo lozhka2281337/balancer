@@ -24,4 +24,8 @@ class MachineRepository extends ServiceEntityRepository
         
         return $machine;
     }
+
+    public function getAllMAchines(): array {
+        return $this->findAll();
+    }
 }

@@ -2,14 +2,12 @@
 
 namespace App\Controller;
 
-use App\Entity\Machine;
 use App\Entity\Process;
 use App\Repository\ProcessRepository;
 use App\Validator\ProcessValidator;
 use App\HelperFunctions\ResponseFunctions as response;
-use App\Service\ProcessDistribution;
+use App\Service\AddProcessFunctions;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,22 +16,21 @@ use Symfony\Component\Routing\Attribute\Route;
 final class ProcessController extends AbstractController
 {
     public function __construct(
-        private EntityManagerInterface $em,
         private ProcessValidator $processValidator,
         private ProcessRepository $processRepository,
-        private ProcessDistribution $PD
+        private AddProcessFunctions $APF
     ){}
 
     #[Route('/add_process', name: 'add_new_process', methods: ['POST'])]
-    public function add_process(Request $request): JsonResponse
+    public function addProcess(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
         // проверка на валидность данных
         if ($data == null) return response::error('json невалидный', 422);
         if (!isset($data['cpu'], $data['memory'])) return response::error('поля cpu и memory должны быть заполнены', 422);
-        
-        // созздаем процесс
+       
+        // создаем процесс
         $process = new Process;
         $process->setCpu((int)$data['cpu']);
         $process->setMemory((int)$data['memory']);
@@ -43,9 +40,9 @@ final class ProcessController extends AbstractController
             return response::errors($errors, 422);
 
         // ищем подходящую машину
-        $target_machine = $this->PD->distribution($process);
-        if ($target_machine == null) 
-            return response::error('не нашлось подходящей машины', 400);
+        $target_machine = $this->APF->SearchMachine($process);
+        if ($target_machine === null) 
+            return response::error('не нашлось подходящей машины', 422);
         $process->setMachine($target_machine);
 
         // через репозиторий сохраняем в бд
@@ -58,11 +55,12 @@ final class ProcessController extends AbstractController
     }
 
     #[Route('/remove_process', name: 'remove_process', methods: ['POST'])]
-    public function remove_process(Request $request): JsonResponse {
+    public function removeProcess(Request $request): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
+        if ($data == null) return response::error('json невалидный', 422);        
         if (!isset($data['id'])){
-            return response::error('поле id должно быть заполнено');
+            return response::error('поле id должно быть заполнено', 422);
         }
 
         $id = $data['id'];
@@ -70,13 +68,12 @@ final class ProcessController extends AbstractController
             return response::error('поле id должно быть числом', 422);
         }
 
-        $process = $this->em->getRepository(Process::class)->find((int)$id);
+        $process = $this->processRepository->find((int)$id);
         if ($process == null){
-            return response::error('машины с таким id нет');
+            return response::error('процесса с таким id нет');
         }
 
-        $this->em->remove($process);
-        $this->em->flush();
+        $this->processRepository->remove($process);
 
         return response::success('процесс успешно удален');
     }
