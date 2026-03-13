@@ -7,6 +7,7 @@ use App\Repository\MachineRepository;
 use App\Validator\MachineValidator;
 use App\HelperFunctions\ResponseFunctions as response;
 use App\Service\DeleteMachineFunction;
+use App\Service\Rebalancing;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,7 +18,8 @@ final class MachineController extends AbstractController
     public function __construct(
         private MachineValidator $machineValidator,
         private MachineRepository $machineRepository,
-        private DeleteMachineFunction $deleteMachineFunction
+        private DeleteMachineFunction $deleteMachineFunction,
+        private Rebalancing $rebalancing
     ){}
 
     #[Route('/add_machine', name: 'add_new_machine', methods: ['POST'])]
@@ -47,6 +49,9 @@ final class MachineController extends AbstractController
         // через репозиторий сохраняем в бд
         $machine = $this->machineRepository->store($machine);
 
+        // делаем ребалансировку
+        $this->rebalancing->rebalance();
+
         return $this->json([
             'memory' => $machine->getTotalMemory(),
             'cpu' => $machine->getTotalCpu()
@@ -75,8 +80,12 @@ final class MachineController extends AbstractController
         $orphanedProcesses =  $this->deleteMachineFunction->deleteMachine($machine); 
 
         // елси нет осиротевших процессов - возваращаем 201
-        if (empty($orphanedProcesses))
+        if (empty($orphanedProcesses)){
+            // делаем ребалансировку
+            $this->rebalancing->rebalance();
+
             return response::success('машина успешно удалена', 201);
+        }
 
         return response::errorDeleteMachine($orphanedProcesses, 422);
     }

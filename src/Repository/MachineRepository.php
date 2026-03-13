@@ -25,14 +25,12 @@ class MachineRepository extends ServiceEntityRepository
         return $machine;
     }
 
-    public function getAllMAchines(): array {
+    public function getAllMachines(): array {
         return $this->findAll(); 
     }
 
-    public function delete(Machine $machine): array {
+    public function delete(Machine $machine): void {
         $this->getEntityManager()->remove($machine);
         $this->getEntityManager()->flush();
-
-        return [];
     }
 }

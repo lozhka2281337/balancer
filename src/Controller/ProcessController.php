@@ -80,6 +80,9 @@ final class ProcessController extends AbstractController
 
         $this->processRepository->remove($process);
 
+        // делаем ребалансировку
+        $this->rebalancing->rebalance();
+
         return response::success('процесс успешно удален');
     }
 }

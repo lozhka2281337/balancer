@@ -27,7 +27,7 @@ class DeleteMachineFunction {
         $machineResources = [];
 
         foreach ($allMachines as $machine){
-            if ($machine === $deletingMachine) continue;
+            if ($machine->getId() === $deletingMachine->getId()) continue;
 
             [$used_cpu, $used_memory] = $this->machineFunctions->resourceCalculation($machine);
 
@@ -77,13 +77,13 @@ class DeleteMachineFunction {
         return [$orphanedProcesses, $machineResources];
     }
 
-    public function deleteMachine(Machine $machine): array {
+    public function deleteMachine(Machine $deletedMachine): array {
         /*
             удаляем машины, еслли это возмонжно,
             инчае возвращаем список процессов, для которых не смогли найти новые машины
         */
 
-        [$orphanedProcesses, $machineResources] = $this->checkDeleteMachine($machine);
+        [$orphanedProcesses, $machineResources] = $this->checkDeleteMachine($deletedMachine);
 
         if (!empty($orphanedProcesses)){
             return $orphanedProcesses;
@@ -91,9 +91,11 @@ class DeleteMachineFunction {
 
         foreach ($machineResources as [$cpu, $memory, $machine, $processList]){
             foreach ($processList as $process){
-                $process->setMachine($machine);
+                $this->processRepository->move($process, $machine);
             }
         }
+
+        $this->machineRepository->delete($deletedMachine);
 
         return [];
     }

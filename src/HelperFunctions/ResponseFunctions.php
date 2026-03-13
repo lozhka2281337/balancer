@@ -2,6 +2,7 @@
 
 namespace App\HelperFunctions;
 
+use App\Entity\Process;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ResponseFunctions
@@ -19,8 +20,14 @@ class ResponseFunctions
     }
 
     public static function errorDeleteMachine($orphanedProcesses, int $status = 400): JsonResponse {
+        $result = array_map(fn(Process $process) => [
+            'id'     => $process->getId(),
+            'cpu'    => $process->getCpu(),
+            'memory' => $process->getMemory(),
+        ], $orphanedProcesses);
+        
         return new JsonResponse([
-            'не удалось удалить машину, ' => $orphanedProcesses
-        ]);
+            'машина не удалена - не удалось найти машины для следующих процессов:' => $result
+        ], $status);
     } 
 }
