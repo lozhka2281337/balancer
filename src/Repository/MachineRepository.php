@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Machine;
+
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -12,9 +13,8 @@ use Doctrine\Persistence\ManagerRegistry;
 class MachineRepository extends ServiceEntityRepository
 {
     public function __construct(
-        private ManagerRegistry $registry
-        )
-    {
+        private ManagerRegistry $registry,
+    ){
         parent::__construct($registry, Machine::class);
     }
 
@@ -26,6 +26,13 @@ class MachineRepository extends ServiceEntityRepository
     }
 
     public function getAllMAchines(): array {
-        return $this->findAll();
+        return $this->findAll(); 
+    }
+
+    public function delete(Machine $machine): array {
+        $this->getEntityManager()->remove($machine);
+        $this->getEntityManager()->flush();
+
+        return [];
     }
 }

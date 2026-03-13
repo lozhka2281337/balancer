@@ -6,7 +6,7 @@ use App\Entity\Machine;
 use App\Repository\MachineRepository;
 use App\Validator\MachineValidator;
 use App\HelperFunctions\ResponseFunctions as response;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\DeleteMachineFunction;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,9 +15,9 @@ use Symfony\Component\Routing\Attribute\Route;
 final class MachineController extends AbstractController
 {
     public function __construct(
-        private EntityManagerInterface $em,
         private MachineValidator $machineValidator,
-        private MachineRepository $machineRepository
+        private MachineRepository $machineRepository,
+        private DeleteMachineFunction $deleteMachineFunction
     ){}
 
     #[Route('/add_machine', name: 'add_new_machine', methods: ['POST'])]
@@ -58,7 +58,7 @@ final class MachineController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         if (!isset($data['id'])){
-            return response::error('поле id должно быть заполнено');
+            return response::error('поле id должно быть заполнено', 422);
         }
 
         $id = $data['id'];
@@ -66,14 +66,18 @@ final class MachineController extends AbstractController
             return response::error('поле id должно быть числом', 422);
         }
 
-        $machine = $this->em->getRepository(Machine::class)->find((int)$id);
+        $machine = $this->machineRepository->find((int)$id);
         if ($machine == null){
-            return response::error('машины с таким id нет');
+            return response::error('машины с таким id нет', 422);
         }
 
-        $this->em->remove($machine);
-        $this->em->flush();
+        // получем список процессов, которым не нашлась новая машина
+        $orphanedProcesses =  $this->deleteMachineFunction->deleteMachine($machine); 
 
-        return response::success('машина успешно удалена');
+        // елси нет осиротевших процессов - возваращаем 201
+        if (empty($orphanedProcesses))
+            return response::success('машина успешно удалена', 201);
+
+        return response::errorDeleteMachine($orphanedProcesses, 422);
     }
 }

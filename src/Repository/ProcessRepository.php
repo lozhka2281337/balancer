@@ -7,6 +7,7 @@ use App\Entity\Process;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+
 /**
  * @extends ServiceEntityRepository<Process>
  */
@@ -31,11 +32,11 @@ class ProcessRepository extends ServiceEntityRepository
         $this->getEntityManager()->flush();
     }
 
-    public function findMachineProcess(Machine $machine): array {
+    public function findMachineProcesses(Machine $machine): array {
         return $this->findBy(['machine' => $machine]);
     }
 
-    public function moveProcess(Process $process, Machine $machine): void{
+    public function move(Process $process, Machine $machine): void{
         $process->setMachine($machine);
         $this->store($process);
     }

@@ -7,6 +7,7 @@ use App\Repository\ProcessRepository;
 use App\Validator\ProcessValidator;
 use App\HelperFunctions\ResponseFunctions as response;
 use App\Service\AddProcessFunctions;
+use App\Service\Rebalancing;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,7 +19,8 @@ final class ProcessController extends AbstractController
     public function __construct(
         private ProcessValidator $processValidator,
         private ProcessRepository $processRepository,
-        private AddProcessFunctions $APF
+        private AddProcessFunctions $addProcessFunctions,
+        private Rebalancing $rebalancing
     ){}
 
     #[Route('/add_process', name: 'add_new_process', methods: ['POST'])]
@@ -40,13 +42,16 @@ final class ProcessController extends AbstractController
             return response::errors($errors, 422);
 
         // ищем подходящую машину
-        $targetMachine = $this->APF->SearchMachine($process);
+        $targetMachine = $this->addProcessFunctions->SearchMachine($process);
         if ($targetMachine === null) 
             return response::error('не нашлось подходящей машины', 422);
         $process->setMachine($targetMachine);
 
         // через репозиторий сохраняем в бд
         $process = $this->processRepository->store($process);
+
+        // делаем ребалансировку
+        $this->rebalancing->rebalance();
 
         return $this->json([
             'memory' => $process->getMemory(),

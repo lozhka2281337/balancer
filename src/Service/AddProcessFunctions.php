@@ -20,7 +20,7 @@ class AddProcessFunctions {
         $cpu = $process->getCpu();
         $memory = $process->getMemory();
         
-        $machineProcesses = $this->processRepository->findMachineProcess($machine); //$this->em->getRepository(Process::class)->findBy(['machine' => $machine]);
+        $machineProcesses = $this->processRepository->findMachineProcesses($machine); 
         $usedMemory = 0;
         $usedCpu = 0;
 
@@ -29,7 +29,7 @@ class AddProcessFunctions {
             $usedMemory += $pr->getMemory();
         }
 
-        if ($machine->getTotalCpu() - $usedCpu >= $cpu || 
+        if ($machine->getTotalCpu() - $usedCpu >= $cpu && 
             $machine->getTotalMemory() - $usedMemory >= $memory ){
                 return true;
         }      
