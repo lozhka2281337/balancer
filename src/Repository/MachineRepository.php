@@ -18,9 +18,13 @@ class MachineRepository extends ServiceEntityRepository
         parent::__construct($registry, Machine::class);
     }
 
+    public function saveChanges(){
+        $this->getEntityManager()->flush();
+    }
+
     public function store(Machine $machine): Machine {
         $this->getEntityManager()->persist($machine);
-        $this->getEntityManager()->flush();
+        $this->saveChanges();
         
         return $machine;
     }
@@ -31,6 +35,5 @@ class MachineRepository extends ServiceEntityRepository
 
     public function delete(Machine $machine): void {
         $this->getEntityManager()->remove($machine);
-        $this->getEntityManager()->flush();
     }
 }

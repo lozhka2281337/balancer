@@ -95,8 +95,9 @@ class DeleteMachineFunction {
             }
         }
 
-        $this->processRepository->saveChanges();
+        // удаляем машину и сохраняем все изменения в бд
         $this->machineRepository->delete($deletedMachine);
+        $this->processRepository->saveChanges();
 
         return [];
     }
