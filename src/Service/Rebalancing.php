@@ -58,7 +58,7 @@ class Rebalancing{
             $mn = $pair[1];
 
             // если попалась одна и та же машина
-            if ($mx->getId() === $mn->getId()) break;
+            if ($mx->getId() === $mn->getId()) continue;
 
             $relocatableProcess = $this->processSelection($mx, $mn);
             if ($relocatableProcess !== null){

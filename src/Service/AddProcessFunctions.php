@@ -6,7 +6,6 @@ use App\Entity\Machine;
 use App\Entity\Process;
 use App\Repository\MachineRepository;
 use App\Repository\ProcessRepository;
-use Doctrine\ORM\EntityManagerInterface;
 
 class AddProcessFunctions {
     public function __construct(

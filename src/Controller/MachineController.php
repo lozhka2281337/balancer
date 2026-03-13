@@ -76,14 +76,11 @@ final class MachineController extends AbstractController
             return response::error('машины с таким id нет', 422);
         }
 
-        // получем список процессов, которым не нашлась новая машина
+        // получем список процессов, для которых не нашлась новая машина
         $orphanedProcesses =  $this->deleteMachineFunction->deleteMachine($machine); 
 
         // елси нет осиротевших процессов - возваращаем 201
         if (empty($orphanedProcesses)){
-            // делаем ребалансировку
-            $this->rebalancing->rebalance();
-
             return response::success('машина успешно удалена', 201);
         }
 

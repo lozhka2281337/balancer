@@ -47,11 +47,10 @@ final class ProcessController extends AbstractController
             return response::error('не нашлось подходящей машины', 422);
         $process->setMachine($targetMachine);
 
-        // через репозиторий сохраняем в бд
-        $process = $this->processRepository->store($process);
-
         // делаем ребалансировку
         $this->rebalancing->rebalance();
+        // сохраняем в бд
+        $process = $this->processRepository->store($process);
 
         return $this->json([
             'memory' => $process->getMemory(),

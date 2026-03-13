@@ -85,7 +85,6 @@ class Machine
     public function removeProcess(Process $process): static
     {
         if ($this->processes->removeElement($process)) {
-            // set the owning side to null (unless already changed)
             if ($process->getmachine() === $this) {
                 $process->setmachine(null);
             }

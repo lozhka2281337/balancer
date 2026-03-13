@@ -17,7 +17,7 @@ class DeleteMachineFunction {
     public function checkDeleteMachine(Machine $deletingMachine): array {
         /* 
             проверяем возможность удаления машины, т е
-            сможем ли раскидать прорцессы по другим машинам
+            сможем ли раскидать процессы по другим машинам
         */
 
         $machineProcess = $this->processRepository->findMachineProcesses($deletingMachine);
@@ -37,17 +37,17 @@ class DeleteMachineFunction {
         // список проессов, для которых не нашлось новой машины
         $orphanedProcesses = [];
 
-        $findedMachine = true;
+        $foundMachine = true;
         foreach ($machineProcess as $process){
-            if ($findedMachine){
-                // сортируем по сумме свободных ресурсов по убыванию
+            if ($foundMachine){
+                // сортируем по сумме свободных ресурсов в порядке убывания
                 usort($machineResources, function($a, $b){
-                    return $b[2]->getTotalCpu() + $b[2]->getTotalMemory() - ($b[0] + $b[1]) <=> 
-                        $a[2]->getTotalCpu() + $a[2]->getTotalMemory() - ($a[0] + $a[1]);
+                    return $this->machineFunctions->loadRating($a[2], $a[0], $a[1]) <=> 
+                           $this->machineFunctions->loadRating($b[2], $b[0], $b[1]);
                 });
             }
 
-            $findedMachine = false;
+            $foundMachine = false;
 
             $pr_cpu = $process->getCpu();
             $pr_memory = $process->getMemory();
@@ -64,22 +64,22 @@ class DeleteMachineFunction {
                         [...$processList, $process]
                     ];
 
-                    $findedMachine = true;
+                    $foundMachine = true;
                     break;
                 }
             }
 
             // осиротевший процесс
-            if (!$findedMachine) $orphanedProcesses[] = $process; 
+            if (!$foundMachine) $orphanedProcesses[] = $process; 
         }
 
-        // возваращем список: [список осиротевших, список машин и их новые процессы]
+        // возвращаем список: [список осиротевших, список машин и их новые процессы]
         return [$orphanedProcesses, $machineResources];
     }
 
     public function deleteMachine(Machine $deletedMachine): array {
         /*
-            удаляем машины, еслли это возмонжно,
+            удаляем машины, если это возмонжно,
             инчае возвращаем список процессов, для которых не смогли найти новые машины
         */
 
