@@ -95,6 +95,7 @@ class DeleteMachineFunction {
             }
         }
 
+        $this->processRepository->saveChanges();
         $this->machineRepository->delete($deletedMachine);
 
         return [];

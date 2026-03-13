@@ -20,10 +20,13 @@ class ProcessRepository extends ServiceEntityRepository
         parent::__construct($registry, Process::class);
     }
 
+    public function saveChanges(){
+        $this->getEntityManager()->flush();
+    }
+
     public function store(Process $process): Process {
         $this->getEntityManager()->persist($process);
-        $this->getEntityManager()->flush();
-
+        $this->saveChanges();
         return $process;
     }
 
@@ -38,6 +41,6 @@ class ProcessRepository extends ServiceEntityRepository
 
     public function move(Process $process, Machine $machine): void{
         $process->setMachine($machine);
-        $this->store($process);
+        $this->getEntityManager()->persist($process);
     }
 }

@@ -3,7 +3,6 @@
 namespace App\HelperFunctions;
 
 use App\Entity\Machine;
-use App\Repository\MachineRepository;
 use App\Repository\ProcessRepository;
 
 class MachineCalculationFunctions{
