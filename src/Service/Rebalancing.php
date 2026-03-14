@@ -63,6 +63,7 @@ class Rebalancing{
             $relocatableProcess = $this->processSelection($mx, $mn);
             if ($relocatableProcess !== null){
                 $this->processRepository->move($relocatableProcess, $mn);
+                $this->processRepository->saveChanges();
                 return $mn;
             }
         }
@@ -81,8 +82,14 @@ class Rebalancing{
             где исходная машина - машина, из которой взяли процесс,
             а целевая машина - машина, на котороую поолжили новый процесс
         */
+        $maxIterations = count($this->processRepository->findAll());
+        $iterations = 0;
+
         $sourceTargetMachines = [];
         for (;;) {
+            // ограничиваем количество итераций цикла
+            if ($iterations++ >= $maxIterations) break;
+
             // хранит пары: [загрузка машины, машина]
             $machineLoads = [];
             foreach ($machines as $machine){

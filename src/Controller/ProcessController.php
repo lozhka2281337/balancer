@@ -53,8 +53,8 @@ final class ProcessController extends AbstractController
         $this->rebalancing->rebalance();
 
         return $this->json([
-            'memory' => $process->getMemory(),
-            'cpu' => $process->getCpu()
+            'id процесса' => $process->getId(),
+            'расположен на машине с id' => $process->getMachine()->getId()
         ]);
     }
 

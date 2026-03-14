@@ -53,8 +53,7 @@ final class MachineController extends AbstractController
         $this->rebalancing->rebalance();
 
         return $this->json([
-            'memory' => $machine->getTotalMemory(),
-            'cpu' => $machine->getTotalCpu()
+            'id машины' => $machine->getId()
         ], 201);
     }
 
