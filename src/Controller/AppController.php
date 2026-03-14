@@ -17,7 +17,7 @@ final class AppController extends AbstractController
         private MachineCalculationFunctions $machineFunctions
     ){}
 
-    #[Route('/app_status', name: 'app_status', methods: ['GET'])]
+    #[Route('/status', name: 'app_status', methods: ['GET'])]
     public function index(): JsonResponse {
         /* 
             вычисляем состояние приложения 

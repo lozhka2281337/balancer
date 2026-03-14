@@ -23,7 +23,7 @@ final class ProcessController extends AbstractController
         private Rebalancing $rebalancing
     ){}
 
-    #[Route('/add_process', name: 'add_new_process', methods: ['POST'])]
+    #[Route('/process', name: 'add_new_process', methods: ['POST'])]
     public function addProcess(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -58,7 +58,7 @@ final class ProcessController extends AbstractController
         ]);
     }
 
-    #[Route('/remove_process', name: 'remove_process', methods: ['POST'])]
+    #[Route('/process', name: 'remove_process', methods: ['DELETE'])]
     public function removeProcess(Request $request): JsonResponse {
         $data = json_decode($request->getContent(), true);
 

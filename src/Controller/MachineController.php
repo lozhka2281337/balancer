@@ -22,7 +22,7 @@ final class MachineController extends AbstractController
         private Rebalancing $rebalancing
     ){}
 
-    #[Route('/add_machine', name: 'add_new_machine', methods: ['POST'])]
+    #[Route('/machine', name: 'add_new_machine', methods: ['POST'])]
     public function add_machine(Request $request): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -58,7 +58,7 @@ final class MachineController extends AbstractController
         ], 201);
     }
 
-    #[Route('/remove_machine', name: 'remove_machine', methods: ['POST'])]
+    #[Route('/machine', name: 'remove_machine', methods: ['DELETE'])]
     public function remove_machine(Request $request): JsonResponse {
         $data = json_decode($request->getContent(), true);
 
