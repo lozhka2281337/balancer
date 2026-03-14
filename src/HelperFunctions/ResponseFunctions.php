@@ -19,7 +19,24 @@ class ResponseFunctions
         return new JsonResponse(['данные' => $data], $status);
     }
 
-    public static function errorDeleteMachine($orphanedProcesses, int $status = 400): JsonResponse {
+    public static function printAppStatus(mixed $machineResources): JsonResponse {
+        $result = array_map(fn($items) => [
+            'id машины'             => $items[0]->getId(),
+            'неиспользовано cpu'    => $items[0]->getTotalCpu() - $items[1],
+            'неиспользовано memory' => $items[0]->getTotalMemory() - $items[2],
+            'процессы'              => array_map(fn($pr) => [
+                'id'     => $pr->getId(),
+                'cpu'    => $pr->getCpu(),
+                'memory' => $pr->getMemory(),
+    ], $items[3]),
+], $machineResources);
+
+        return new JsonResponse([
+            'состояние сервиса' => $result
+        ], 200);
+    } 
+
+    public static function errorDeleteMachine(mixed $orphanedProcesses, int $status = 400): JsonResponse {
         $result = array_map(fn(Process $process) => [
             'id'     => $process->getId(),
             'cpu'    => $process->getCpu(),

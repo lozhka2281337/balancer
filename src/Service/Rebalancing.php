@@ -92,7 +92,7 @@ class Rebalancing{
                 $machineLoads[] = [$load, $machine];
             }
 
-            // сортируем
+            // сортируем по возрастанию нагрузки
             usort($machineLoads, function(
                 $a, $b){
                 return $a[0] <=> $b[0];

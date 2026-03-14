@@ -31,7 +31,7 @@ final class ProcessController extends AbstractController
         // проверка на валидность данных
         if ($data == null) return response::error('json невалидный', 422);
         if (!isset($data['cpu'], $data['memory'])) return response::error('поля cpu и memory должны быть заполнены', 422);
-       
+    
         // создаем процесс
         $process = new Process;
         $process->setCpu((int)$data['cpu']);
@@ -47,10 +47,10 @@ final class ProcessController extends AbstractController
             return response::error('не нашлось подходящей машины', 422);
         $process->setMachine($targetMachine);
 
-        // делаем ребалансировку
-        $this->rebalancing->rebalance();
         // сохраняем в бд
         $process = $this->processRepository->store($process);
+        // делаем ребалансировку
+        $this->rebalancing->rebalance();
 
         return $this->json([
             'memory' => $process->getMemory(),
