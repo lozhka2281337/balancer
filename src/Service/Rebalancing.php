@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Config\BalancerThreshold;
 use App\Entity\Machine;
 use App\Entity\Process;
 use App\Repository\MachineRepository;
@@ -12,14 +13,14 @@ class Rebalancing{
     public function __construct(
         private ProcessRepository $processRepository,
         private MachineRepository $machineRepository,
-        private MachineCalculationFunctions $machineFunctions
+        private MachineCalculationFunctions $machineCalculator
     ){}
 
     public function processSelection(Machine $sourceMachine, Machine $targetMachine): Process | null{
-        [$usedCpu, $usedMemory, $processes] = $this->machineFunctions->resourceCalculation($sourceMachine);
-        [$usedTargetCpu, $usedTargetMemory] = $this->machineFunctions->resourceCalculation($targetMachine);
+        [$usedCpu, $usedMemory, $processes] = $this->machineCalculator->resourceCalculation($sourceMachine);
+        [$usedTargetCpu, $usedTargetMemory] = $this->machineCalculator->resourceCalculation($targetMachine);
 
-        $sourceLoad = $this->machineFunctions->loadRating($sourceMachine, $usedCpu, $usedMemory);
+        $sourceLoad = $this->machineCalculator->loadRating($sourceMachine, $usedCpu, $usedMemory);
         $bestLoad = $sourceLoad;
         $bestProcess = null;
 
@@ -32,13 +33,13 @@ class Rebalancing{
             $processCpu = $process->getCpu();
             $processMemory = $process->getMemory();
 
-            $newSourceLoad = $this->machineFunctions->loadRating($sourceMachine, $usedCpu - $processCpu, $usedMemory - $processMemory);
+            $newSourceLoad = $this->machineCalculator->loadRating($sourceMachine, $usedCpu - $processCpu, $usedMemory - $processMemory);
 
             if ($bestLoad <= $newSourceLoad) continue;
             if ($usedTargetCpu + $processCpu > $targetMachine->getTotalCpu() ||
                 $usedTargetMemory + $processMemory > $targetMachine->getTotalMemory()) continue;
 
-            $targetLoadAfter = $this->machineFunctions->loadRating(
+            $targetLoadAfter = $this->machineCalculator->loadRating(
                 $targetMachine, 
                 $usedTargetCpu + $processCpu, 
                 $usedTargetMemory + $processMemory);
@@ -93,8 +94,8 @@ class Rebalancing{
             // хранит пары: [загрузка машины, машина]
             $machineLoads = [];
             foreach ($machines as $machine){
-                [$usedCpu, $usedMemory] = $this->machineFunctions->resourceCalculation($machine);
-                $load = $this->machineFunctions->loadRating($machine, $usedCpu, $usedMemory); 
+                [$usedCpu, $usedMemory] = $this->machineCalculator->resourceCalculation($machine);
+                $load = $this->machineCalculator->loadRating($machine, $usedCpu, $usedMemory); 
                 
                 $machineLoads[] = [$load, $machine];
             }
@@ -109,8 +110,9 @@ class Rebalancing{
             [$maxLoad, $mx] = end($machineLoads);
             [$minLoad, $mn] = $machineLoads[0];
 
-            // если нагрузка достаточно равномерна - return
-            if ($minLoad / $maxLoad > 0.9){
+            // если нагрузка равномерная - return
+            $threshold = BalancerThreshold::SUITABLE_MACHINE_THRESHOLD->value();
+            if ($minLoad / $maxLoad > $threshold){
                 return $sourceTargetMachines;
             }
 

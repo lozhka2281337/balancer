@@ -11,7 +11,7 @@ class DeleteMachineFunction {
     public function __construct(
         private ProcessRepository $processRepository,
         private MachineRepository $machineRepository,
-        private MachineCalculationFunctions $machineFunctions
+        private MachineCalculationFunctions $machineCalculator
     ){}
 
     public function checkDeleteMachine(Machine $deletingMachine): array {
@@ -29,7 +29,7 @@ class DeleteMachineFunction {
         foreach ($allMachines as $machine){
             if ($machine->getId() === $deletingMachine->getId()) continue;
 
-            [$used_cpu, $used_memory] = $this->machineFunctions->resourceCalculation($machine);
+            [$used_cpu, $used_memory] = $this->machineCalculator->resourceCalculation($machine);
 
             $machineResources[] = [$used_cpu, $used_memory, $machine, []];
         }
@@ -42,8 +42,8 @@ class DeleteMachineFunction {
             if ($foundMachine){
                 // сортируем по сумме свободных ресурсов в порядке убывания
                 usort($machineResources, function($a, $b){
-                    return $this->machineFunctions->loadRating($a[2], $a[0], $a[1]) <=> 
-                           $this->machineFunctions->loadRating($b[2], $b[0], $b[1]);
+                    return $this->machineCalculator->loadRating($a[2], $a[0], $a[1]) <=> 
+                           $this->machineCalculator->loadRating($b[2], $b[0], $b[1]);
                 });
             }
 

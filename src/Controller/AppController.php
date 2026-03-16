@@ -14,7 +14,7 @@ final class AppController extends AbstractController
 {
     public function __construct(
         private MachineRepository $machineRepository,
-        private MachineCalculationFunctions $machineFunctions
+        private MachineCalculationFunctions $machineCalculator
     ){}
 
     #[Route('/status', name: 'app_status', methods: ['GET'])]
@@ -28,15 +28,15 @@ final class AppController extends AbstractController
         // [машина, заянятый cpu, занятая memory, список процессов]
         $machineResources = [];
         foreach ($allMachines as $machine){
-            [$usedCpu, $usedMemory, $processes] = $this->machineFunctions->resourceCalculation($machine);
+            [$usedCpu, $usedMemory, $processes] = $this->machineCalculator->resourceCalculation($machine);
 
             $machineResources[] = [$machine, $usedCpu, $usedMemory, $processes];
         }
 
         // сортируем по возрастанию (по сумме ресурсов)
         usort($machineResources, function($a, $b){
-            return $this->machineFunctions->loadRating($a[0], $a[1], $a[2]) <=>
-                   $this->machineFunctions->loadRating($b[0], $b[1], $b[2]);
+            return $this->machineCalculator->loadRating($a[0], $a[1], $a[2]) <=>
+                   $this->machineCalculator->loadRating($b[0], $b[1], $b[2]);
         });
 
         return response::printAppStatus($machineResources);
