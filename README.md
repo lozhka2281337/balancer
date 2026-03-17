@@ -1,5 +1,6 @@
 # Balancer
 
+[![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue)](https://php.net)
 Бэкенд приложение на Symfony. 
 
 
@@ -10,7 +11,7 @@
 - процесс размещается полностью на одной машине
 - показывает текущее состояние сервиса
 
-* все алгоритмы описаны в ALGORITHMS.md
+* [описание алгоритмов](ALGORITHMS.md)
 
 ## Требования
 - PHP >= 8.1
@@ -53,7 +54,7 @@ php -S localhost:8000 -t public
 
 * Для запросов рекомендуется использовать postman
 
-### Команды
+### Эндпоинты
 
 ```bash
 GET http://localhost:8000/status
