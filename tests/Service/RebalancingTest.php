@@ -232,7 +232,7 @@ class RebalancingTest extends TestCase
             ->method('findAll')
             ->willReturn([$p1, $p2]);
 
-        // обе машины загружены одинаково (load = 0.9)
+        // обе машины загружены одинаково 
         $this->processRepository
             ->method('findMachineProcesses')
             ->willReturnCallback(function (Machine $machine) use ($m1, $m2, $p1, $p2) {
@@ -264,12 +264,12 @@ class RebalancingTest extends TestCase
             ->method('getAllMachines')
             ->willReturn([$m1, $m2]);
 
-        // findAll() возвращает 1 процесс → maxIterations = 1 (ровно один проход цикла)
+        // findAll() возвращает 1 процесс - maxIterations = 1 (ровно один проход цикла)
         $this->processRepository
             ->method('findAll')
             ->willReturn([$p1]);
 
-        // m1 загружена на 75% (150/200), m2 пустая (0%)
+        // m1 загружена на 75%, m2 пустая (0%)
         $this->processRepository
             ->method('findMachineProcesses')
             ->willReturnCallback(function (Machine $machine) use ($m1, $p1, $p2) {
@@ -307,7 +307,7 @@ class RebalancingTest extends TestCase
             ->method('findAll')
             ->willReturn([$process]);
 
-        // m1 полностью загружена (10/10 = 1.0), m2 пустая
+        // m1 полностью загружена,m2 пустая
         $this->processRepository
             ->method('findMachineProcesses')
             ->willReturnCallback(function (Machine $machine) use ($m1, $process) {

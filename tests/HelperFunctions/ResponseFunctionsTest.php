@@ -88,7 +88,7 @@ class ResponseFunctionsTest extends TestCase
         $process->setCpu(30);
         $process->setMemory(60);
 
-        // machineResources: [[машина, usedCpu, usedMemory, [процессы]]]
+        // [машина, usedCpu, usedMemory, [процессы]]
         $machineResources = [
             [$machine, 30, 60, [$process]],
         ];
@@ -119,7 +119,7 @@ class ResponseFunctionsTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
 
         $data = json_decode($response->getContent(), true);
-        $this->assertEmpty($data['состояние сервиса']);
+        $this->assertEquals('пока нет ни одной машины', $data['состояние сервиса']);
     }
 
     // errorDeleteMachine возвращает JsonResponse с осиротевшими процессами

@@ -31,6 +31,8 @@ class ResponseFunctions
     ], $items[3]),
 ], $machineResources);
 
+        if (empty($result)) $result = 'пока нет ни одной машины';
+
         return new JsonResponse([
             'состояние сервиса' => $result
         ], 200);
