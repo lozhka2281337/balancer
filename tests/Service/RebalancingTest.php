@@ -264,7 +264,7 @@ class RebalancingTest extends TestCase
             ->method('getAllMachines')
             ->willReturn([$m1, $m2]);
 
-        // 1 процесс → maxIterations = 1
+        // findAll() возвращает 1 процесс → maxIterations = 1 (ровно один проход цикла)
         $this->processRepository
             ->method('findAll')
             ->willReturn([$p1]);

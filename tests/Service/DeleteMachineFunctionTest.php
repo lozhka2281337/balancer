@@ -42,6 +42,26 @@ class DeleteMachineFunctionTest extends TestCase
         return $machine;
     }
 
+    /**
+     * Создаёт DeleteMachineFunction с замоканным MachineCalculationFunctions.
+     * Используется когда тест должен изолировать логику перераспределения ресурсов.
+     */
+    private function createServiceWithMockedCalculator(
+        int $resourceCpu = 0,
+        int $resourceMemory = 0,
+        float $loadRating = 0.0
+    ): DeleteMachineFunction {
+        $mockedCalculator = $this->createMock(MachineCalculationFunctions::class);
+        $mockedCalculator->method('resourceCalculation')->willReturn([$resourceCpu, $resourceMemory, []]);
+        $mockedCalculator->method('loadRating')->willReturn($loadRating);
+
+        return new DeleteMachineFunction(
+            $this->processRepository,
+            $this->machineRepository,
+            $mockedCalculator
+        );
+    }
+
     // checkDeleteMachine возвращает пустой список осиротевших когда нет процессов
     public function testCheckDeleteMachineWithNoProcesses(): void
     {
@@ -72,7 +92,6 @@ class DeleteMachineFunctionTest extends TestCase
         $process->setCpu(20);
         $process->setMemory(50);
 
-        // процессы удаляемой машины
         $this->processRepository
             ->method('findMachineProcesses')
             ->with($deletingMachine)
@@ -82,23 +101,10 @@ class DeleteMachineFunctionTest extends TestCase
             ->method('getAllMachines')
             ->willReturn([$deletingMachine, $targetMachine]);
 
-        // на целевой машине нет своих процессов
-        $this->machineCalculator = $this->createMock(MachineCalculationFunctions::class);
-        $this->machineCalculator
-            ->method('resourceCalculation')
-            ->willReturn([0, 0, []]);
+        // используем замоканный калькулятор: целевая машина не имеет нагрузки
+        $service = $this->createServiceWithMockedCalculator();
 
-        $this->machineCalculator
-            ->method('loadRating')
-            ->willReturn(0.0);
-
-        $this->service = new DeleteMachineFunction(
-            $this->processRepository,
-            $this->machineRepository,
-            $this->machineCalculator
-        );
-
-        [$orphanedProcesses, $machineResources] = $this->service->checkDeleteMachine($deletingMachine);
+        [$orphanedProcesses, $machineResources] = $service->checkDeleteMachine($deletingMachine);
 
         $this->assertEmpty($orphanedProcesses);
         // процесс добавлен в список машины
@@ -153,26 +159,14 @@ class DeleteMachineFunctionTest extends TestCase
             ->method('getAllMachines')
             ->willReturn([$deletingMachine, $targetMachine]);
 
-        $this->machineCalculator = $this->createMock(MachineCalculationFunctions::class);
-        $this->machineCalculator
-            ->method('resourceCalculation')
-            ->willReturn([0, 0, []]);
-
-        $this->machineCalculator
-            ->method('loadRating')
-            ->willReturn(0.0);
-
-        $this->service = new DeleteMachineFunction(
-            $this->processRepository,
-            $this->machineRepository,
-            $this->machineCalculator
-        );
+        // используем замоканный калькулятор: целевая машина не имеет нагрузки
+        $service = $this->createServiceWithMockedCalculator();
 
         $this->processRepository->expects($this->once())->method('move')->with($process, $targetMachine);
         $this->machineRepository->expects($this->once())->method('delete')->with($deletingMachine);
         $this->processRepository->expects($this->once())->method('saveChanges');
 
-        $result = $this->service->deleteMachine($deletingMachine);
+        $result = $service->deleteMachine($deletingMachine);
 
         $this->assertEmpty($result);
     }
