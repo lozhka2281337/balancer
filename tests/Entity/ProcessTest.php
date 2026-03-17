@@ -47,4 +47,19 @@ class ProcessTest extends TestCase
 
         $this->assertSame($this->process, $result);
     }
+
+    // машина изначально равна null
+    public function testMachineInitiallyNull(): void
+    {
+        $this->assertNull($this->process->getMachine());
+    }
+
+    // setMachine возвращает static (цепочка вызовов)
+    public function testSetMachineChaining(): void
+    {
+        $machine = new Machine();
+        $result = $this->process->setMachine($machine);
+
+        $this->assertSame($this->process, $result);
+    }
 }
