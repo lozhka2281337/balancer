@@ -1,6 +1,7 @@
 # Balancer
 
 [![PHP Version](https://img.shields.io/badge/PHP-8.1%2B-blue)](https://php.net)
+
 Бэкенд приложение на Symfony. 
 
 
@@ -14,7 +15,7 @@
 * [описание алгоритмов](ALGORITHMS.md)
 
 ## Требования
-- PHP >= 8.1
+- PHP >= 8.4
 - Composer
 
 
