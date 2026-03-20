@@ -141,7 +141,7 @@ class ProcessControllerTest extends ControllerTestCase
     // DELETE /process без поля id возвращает 422
     public function testRemoveProcessWithMissingId(): void
     {
-        $this->deleteJson('/process', []);
+        $this->deleteJson('/process', ["data" => "some data"]);
 
         $this->assertResponseStatusCodeSame(422);
 

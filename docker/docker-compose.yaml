@@ -1,0 +1,43 @@
+services:
+    nginx-service:
+        image: nginx:stable-alpine
+        container_name: nginx-container
+        ports:
+            - "8080:80"
+        volumes:
+            - ../app:/var/www/project
+            - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+        depends_on:
+            - php-service
+            - postgres-service
+        networks:
+            - backend-network
+
+    php-service:
+        build:
+            context: ..
+            dockerfile: Dockerfile
+        container_name: php-container
+        volumes:
+            - ../app:/var/www/project
+        networks:
+            - backend-network
+
+    postgres-service:
+        image: postgres:16.13
+        container_name: postgres-container
+        ports:
+            - "5432:5432"
+        volumes:
+            - ./postgres_data:/var/lib/postgresql/data
+        restart: always # always restart unless stopped manually
+        environment:
+            POSTGRES_DB: balancer_db
+            POSTGRES_USER: user
+            POSTGRES_PASSWORD: root
+        networks:
+            - backend-network
+
+networks:
+    backend-network:
+        driver: bridge

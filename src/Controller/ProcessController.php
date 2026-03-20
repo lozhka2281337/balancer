@@ -63,9 +63,8 @@ final class ProcessController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         if ($data == null) return response::error('json невалидный', 422);        
-        if (!isset($data['id'])){
-            return response::error('поле id должно быть заполнено', 422);
-        }
+        if (!isset($data['id'])) return response::error('поле id должно быть заполнено', 422);
+        
 
         $id = $data['id'];
         if (!is_numeric($id)){

@@ -24,7 +24,7 @@
 ```bash
 git clone https://github.com/lozhka2281337/balancer.git
 cd balancer
-composer install
+composer update
 cp .env.example .env
 ```
 
@@ -125,10 +125,13 @@ curl -X DELETE -H "Content-Type: application/json" -d "{'id': 22}" http://localh
 
 ## Тестирование
 
-```bash
-./vendor/bin/phpunit
+Для тестировония некоторых модулей требуется тестовая бд
+
+Запуск всех тестов
+```bash 
+./vendor/bin/phpunit 
 ```
 
 
 ## Лицензия
-MIT.
+MIT
