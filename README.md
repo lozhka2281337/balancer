@@ -14,9 +14,26 @@
 
 * [описание алгоритмов](ALGORITHMS.md)
 
+
 ## Требования
 - PHP >= 8.4
 - Composer
+
+
+## Быстрый запуск через Docker 
+
+linux:
+```bash
+make run_l
+```
+
+windows:
+```bash
+make run_w
+```
+
+
+## Запуск через терминал
 
 
 ## Установка
@@ -45,29 +62,14 @@ DATABASE_URL="{database}://{username}:{password}@127.0.0.1:5432/{database_name}?
 ```
 
 
-## Запуск в терминале  
+## Запуск 
 
 ```bash
 php -S localhost:8080 -t public
 ```
 
 
-## Запуск через Docker 
-
-linux:
-```bash
-make run
-```
-
-windows:
-```bash
-cd docker && docker-compose build --no-cache
-cd docker && docker-compose up -d 
-docker exec php-container composer install
-docker exec php-container ./vendor/bin/phpunit
-```
-
-### тестирование
+### Тестирование
 
 Для тестировония некоторых модулей требуется тестовая бд (см. конфигурацию)
 
