@@ -32,11 +32,12 @@ cp .env.example .env
 ## Конфигурация
 
 Основные переменные окружения (`.env`):
-необходимо создать .env файл и заполнить DB_HOST и DATABASE_URL
+необходимо создать .env файл:
+1) заполнить DB_HOST, DATABASE_URL для вашей бд.
+2) заполнить DATABASE_URL для тестовой бд в .env.test (опционально)
 
 ```env
 APP_ENV=dev
-APP_SECRET=
 APP_SHARE_DIR=var/share
 
 DB_HOST={host}
@@ -44,10 +45,35 @@ DATABASE_URL="{database}://{username}:{password}@127.0.0.1:5432/{database_name}?
 ```
 
 
-## Быстрый старт
+## Быстрый старт 
 
 ```bash
 php -S localhost:8000 -t public
+```
+
+
+## Запуск через Docker
+
+```bash
+cd docker
+sudo docker-compose build --no-cache
+sudo docker-compose up -d
+```
+
+
+### тестирование
+
+Для тестировония некоторых модулей требуется тестовая бд (см. конфигурацию)
+
+Запуск всех тестов
+```bash 
+./vendor/bin/phpunit 
+```
+
+через docker
+```bash 
+sudo docker exec -it php-container bash
+./vendor/bin/phpunit 
 ```
 
 
@@ -120,16 +146,6 @@ curl -X DELETE -H "Content-Type: application/json" -d "{'id': 22}" http://localh
 {
   "данные": "машина успешно удалена"
 }
-```
-
-
-## Тестирование
-
-Для тестировония некоторых модулей требуется тестовая бд
-
-Запуск всех тестов
-```bash 
-./vendor/bin/phpunit 
 ```
 
 

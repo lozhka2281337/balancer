@@ -20,6 +20,8 @@ services:
         container_name: php-container
         volumes:
             - ..:/var/www/project
+        environment:
+            DATABASE_URL: "postgresql://user:root@postgres-service:5432/balancer_db?charset=utf8"
         networks:
             - backend-network
 
@@ -27,12 +29,24 @@ services:
         image: postgres:16.13
         container_name: postgres-container
         ports:
-            - "5431:5432"
+            - "5432:5432"
         volumes:
             - ./postgres_data:/var/lib/postgresql/data
         restart: always 
         environment:
             POSTGRES_DB: balancer_db
+            POSTGRES_USER: user
+            POSTGRES_PASSWORD: root
+        networks:
+            - backend-network
+
+    postgres-test-service:
+        image: postgres:16.13
+        container_name: postgres-test-container
+        ports:
+            - "5434:5432"
+        environment:
+            POSTGRES_DB: balancer_test_db
             POSTGRES_USER: user
             POSTGRES_PASSWORD: root
         networks:

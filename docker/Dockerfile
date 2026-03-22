@@ -7,14 +7,14 @@ RUN apt-get update && apt-get install -y \
     libicu-dev \
     libzip-dev \
     postgresql-client \
-    && docker-php-ext-install intl opcache pdo pdo_pgsql \
-    && pecl install apcu \
-    && docker-php-ext-enable apcu \
-    && docker-php-ext-configure zip \
-    && docker-php-ext-install zip \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
+    libpq-dev && \
+    docker-php-ext-install intl opcache pdo pdo_pgsql && \
+    pecl install apcu && \
+    docker-php-ext-enable apcu && \
+    docker-php-ext-configure zip && \
+    docker-php-ext-install zip && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 WORKDIR /var/www/project
 
