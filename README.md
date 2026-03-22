@@ -20,28 +20,11 @@
 - Composer
 
 
-## Быстрый запуск через Docker 
-
-linux:
-```bash
-make run_l
-```
-
-windows:
-```bash
-make run_w
-```
-
-
-## Запуск через терминал
-
-
 ## Установка
 
 ```bash
 git clone https://github.com/lozhka2281337/balancer.git
 cd balancer
-composer update
 cp .env.example .env
 ```
 
@@ -62,9 +45,23 @@ DATABASE_URL="{database}://{username}:{password}@127.0.0.1:5432/{database_name}?
 ```
 
 
-## Запуск 
+## Быстрый запуск через Docker 
+
+linux:
+```bash
+make run_l
+```
+
+windows:
+```bash
+make run_w
+```
+
+
+## Запуск через терминал
 
 ```bash
+composer update
 php -S localhost:8080 -t public
 ```
 
