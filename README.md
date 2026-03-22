@@ -48,16 +48,28 @@ DATABASE_URL="{database}://{username}:{password}@127.0.0.1:5432/{database_name}?
 ## Быстрый старт 
 
 ```bash
-php -S localhost:8000 -t public
+php -S localhost:8080 -t public
 ```
 
 
 ## Запуск через Docker
 
+linux:
 ```bash
 cd docker
 sudo docker-compose build --no-cache
 sudo docker-compose up -d
+sudo docker exec -it php container bash
+./vendor/bin/phpunit
+```
+
+windows:
+```bash
+cd docker
+docker-compose build --no-cache
+docker-compose up -d
+docker exec -it php container bash
+./vendor/bin/phpunit
 ```
 
 
@@ -84,20 +96,20 @@ sudo docker exec -it php-container bash
 ### Эндпоинты
 
 ```bash
-GET http://localhost:8000/status
+GET http://localhost:8080/status
 
-POST http://localhost:8000/process
-POST http://localhost:8000/machine
+POST http://localhost:8080/process
+POST http://localhost:8080/machine
 
-DELETE http://localhost:8000/process
-DELETE http://localhost:8000/machine
+DELETE http://localhost:8080/process
+DELETE http://localhost:8080/machine
 
 ```
 
 Примеры запросов через curl:
 
 ```bash
-curl -X GET http://localhost:8000/status
+curl -X GET http://localhost:8080/status
 ```
 
 Пример ответа:
@@ -123,7 +135,7 @@ curl -X GET http://localhost:8000/status
 
 
 ```bash
-curl -X POST -H "Content-Type: application/json" -d "{'memory': 12, 'cpu': 23}" http://localhost:8000/process
+curl -X POST -H "Content-Type: application/json" -d "{'memory': 12, 'cpu': 23}" http://localhost:8080/process
 ```
 
 Пример ответа:
@@ -137,7 +149,7 @@ curl -X POST -H "Content-Type: application/json" -d "{'memory': 12, 'cpu': 23}" 
 
 
 ```bash
-curl -X DELETE -H "Content-Type: application/json" -d "{'id': 22}" http://localhost:8000/machine
+curl -X DELETE -H "Content-Type: application/json" -d "{'id': 22}" http://localhost:8080/machine
 ```
 
 Пример ответа:
