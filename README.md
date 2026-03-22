@@ -45,33 +45,27 @@ DATABASE_URL="{database}://{username}:{password}@127.0.0.1:5432/{database_name}?
 ```
 
 
-## Быстрый старт 
+## Запуск в терминале  
 
 ```bash
 php -S localhost:8080 -t public
 ```
 
 
-## Запуск через Docker
+## Запуск через Docker 
 
 linux:
 ```bash
-cd docker
-sudo docker-compose build --no-cache
-sudo docker-compose up -d
-sudo docker exec -it php container bash
-./vendor/bin/phpunit
+make run
 ```
 
 windows:
 ```bash
-cd docker
-docker-compose build --no-cache
-docker-compose up -d
-docker exec -it php container bash
-./vendor/bin/phpunit
+cd docker && docker-compose build --no-cache
+cd docker && docker-compose up -d 
+docker exec php-container composer install
+docker exec php-container ./vendor/bin/phpunit
 ```
-
 
 ### тестирование
 
