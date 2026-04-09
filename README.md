@@ -15,6 +15,11 @@
 * [описание алгоритмов](ALGORITHMS.md)
 
 
+## Технологии 
+- Symfony
+- PostgreSQL
+- Docker
+
 ## Требования
 - PHP >= 8.4
 - Composer
